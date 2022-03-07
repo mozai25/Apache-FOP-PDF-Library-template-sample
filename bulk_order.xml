@@ -1,0 +1,516 @@
+﻿<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format">
+    
+    <xsl:param name="barsPath">../prod_bars/</xsl:param>
+    <xsl:param name="psPath">../srbox/</xsl:param>
+    <xsl:param name="imagePath">http://3.221.19.159/thumb.php?file=product/</xsl:param>
+    
+    <xsl:template match="/Root">
+    	
+		<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+	    	<xsl:call-template name="pageLayout"/>
+	    	<xsl:for-each select="Order">
+	      		<xsl:call-template name="pageContent"/>
+	      		
+	      		<xsl:choose>
+	      			<xsl:when test="Client/OutBoundLabel != ''">
+	      				<xsl:call-template name="pageSecondContent"/>
+	      			</xsl:when>
+	    			<xsl:otherwise></xsl:otherwise>
+	      		</xsl:choose>
+	      		
+	      	</xsl:for-each>
+	    </fo:root>
+	    
+  	</xsl:template>
+  	
+  	<xsl:template name="pageLayout">
+	    <fo:layout-master-set>
+	      <fo:simple-page-master master-name="pagemaster" page-width="21cm" page-height="29.7cm" margin-top="0cm" margin-bottom="0.1cm" font-size="12px">
+	     	<fo:region-body region-name="body" margin-left="1cm" margin-top="1cm" margin-right="1cm" margin-bottom="0cm"/>
+	        <fo:region-before extent="0.5cm"/>
+	        <fo:region-after extent="0.5cm"/>
+	      </fo:simple-page-master>
+	    </fo:layout-master-set>
+	</xsl:template>
+  	
+  	<xsl:template name="pageContent">
+    	<fo:page-sequence master-reference="pagemaster">
+      		<xsl:call-template name="pageHeader"/>
+      		<!--<xsl:call-template name="pageFooter"/>-->
+      		<xsl:call-template name="pageBody"/>
+      		<!--<xsl:call-template name="test"/>-->
+    	</fo:page-sequence>
+  	</xsl:template>
+  	
+  	<xsl:template name="pageSecondContent">
+    	<fo:page-sequence master-reference="pagemaster">
+      		<xsl:call-template name="orderOutboundBottomDetail"/>
+    	</fo:page-sequence>
+  	</xsl:template>
+  	
+  	<xsl:template name="test">
+		<fo:flow flow-name="body">
+	  		<fo:block margin="0px 0px 0px 0px">
+	  			test
+	  		</fo:block>
+  		</fo:flow>
+  	</xsl:template>
+  	
+  	<xsl:template name="pageHeader">
+		<fo:static-content flow-name="xsl-region-before" display-align="after" margin-left="0.5cm" margin-right="0.5cm" font-family="Helvetica">
+		 	<fo:block margin="0px 0px 0px 0px">
+        
+	            <fo:inline-container inline-progression-dimension="49.9%">
+			    	<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm 0mm 0mm 0mm">
+			    		<fo:external-graphic 
+			    			content-width="scale-to-fit"
+				 			content-height="100%"
+				 			width="90%"
+				 			height="10mm"
+				 			scaling="uniform"
+				 			text-align="left"
+				 		 	src="url(../images/buyback-logo-new.jpg)"></fo:external-graphic>
+			    	</fo:block>
+			  	</fo:inline-container>
+			  	
+			  	<fo:inline-container inline-progression-dimension="49.9%">
+			  		<fo:block>
+			    		
+			 			<fo:external-graphic content-width="scale-to-fit"
+							 content-height="100%"
+							 width="90%"
+							 scaling="uniform">
+			          			<xsl:attribute name="src">
+				              		<xsl:value-of select="$barsPath"/><xsl:value-of select="Client/OrderBar"/>
+				            	</xsl:attribute>
+				       	</fo:external-graphic>
+				 			
+			    	</fo:block>
+	           	</fo:inline-container>
+	       		
+	       	</fo:block>
+	    </fo:static-content>
+  	</xsl:template>
+  	
+  	<xsl:template name="pageFooter">
+		<fo:static-content flow-name="xsl-region-after" display-align="after" margin-left="1cm" margin-right="1cm">
+	   		<fo:block>
+	        	<fo:leader leader-length="100%" leader-pattern="rule" rule-thickness="0.5pt" color="black"/>
+	      	</fo:block>
+	      	<fo:block>Reference # <xsl:value-of select="Client/Order"/></fo:block>
+	    </fo:static-content>
+	</xsl:template>
+    
+    <xsl:template name="pageBody">
+	 	<fo:flow flow-name="body">
+	    	<xsl:call-template name="clientDetail"/>
+	      	<xsl:call-template name="orderDetail"/>
+	      	<xsl:call-template name="orderBottomDetail"/>
+		</fo:flow>
+	</xsl:template>
+    
+    <xsl:template name="clientDetail">
+    	
+	    <fo:block margin="25px 0px 0px 0px" 
+			           				padding="5px 0px 5px 0px"
+			           				text-align="center" 
+			           				font-size="14px" 
+			           				font-weight="bold">BuyBackWorld Packing Slip</fo:block>
+			           				
+		<fo:block margin="0px 0px 0px 0px">
+			            
+        	<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm" font-size="10px">
+	    		<fo:inline-container inline-progression-dimension="49.9%">
+	    			<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm">
+	    				Thank you for choosing BuyBackWorld.com!
+	    			</fo:block>
+	    		</fo:inline-container>
+	    		<fo:inline-container inline-progression-dimension="49.9%">
+	    			<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm" font-weight="bold">
+	    				<fo:inline-container inline-progression-dimension="12.9%">
+	    					<fo:block>Date:</fo:block> 
+	    				</fo:inline-container>
+	    				<fo:inline-container inline-progression-dimension="41.9%" font-weight="normal">
+	    					<fo:block><xsl:value-of select="Client/IssuedOn"/></fo:block>
+	    				</fo:inline-container>
+	    				<fo:inline-container inline-progression-dimension="32.9%" font-weight="normal" font-style="italic">
+	    					<fo:block><xsl:value-of select="Client/OrderType"/></fo:block>
+	    				</fo:inline-container>
+	    			</fo:block>
+	    		</fo:inline-container>
+	    	</fo:block>
+		  	
+       	</fo:block>
+       	
+       	<fo:block margin="0px 0px 0px 0px" font-weight="bold" font-size="10px">
+       	
+        	<fo:inline-container inline-progression-dimension="99.9%">
+		    	<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm">
+		    		<fo:inline-container inline-progression-dimension="24.9%">
+		    			<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm">
+		    				Name:
+		    			</fo:block>
+		    		</fo:inline-container>
+		    		<fo:inline-container inline-progression-dimension="74.9%">
+		    			<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm" font-weight="normal">
+		    				<xsl:value-of select="Client/Name"/>
+		    			</fo:block>
+		    		</fo:inline-container>
+		    	</fo:block>
+		  	</fo:inline-container>
+		  	
+        </fo:block>
+        
+        <fo:block margin="0px 0px 0px 0px" font-weight="bold" font-size="10px">
+       		
+        	<fo:inline-container inline-progression-dimension="99.9%">
+		    	<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm">
+		    		<fo:inline-container inline-progression-dimension="24.9%">
+		    			<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm">
+		    				Address:
+		    			</fo:block>
+		    		</fo:inline-container>
+		    		<fo:inline-container inline-progression-dimension="74.9%">
+		    			<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm" font-weight="normal">
+		    				<xsl:value-of select="Client/Address"/>
+		    			</fo:block>
+		    		</fo:inline-container>
+		    	</fo:block>
+		  	</fo:inline-container>
+		  	
+        </fo:block>
+        
+        <fo:block margin="0px 0px 0px 0px" font-weight="bold" font-size="10px">
+       	
+        	<fo:inline-container inline-progression-dimension="99.9%">
+		    	<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm">
+		    		<fo:inline-container inline-progression-dimension="24.9%">
+		    			<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm">
+		    				Payment Type:
+		    			</fo:block>
+		    		</fo:inline-container>
+		    		<fo:inline-container inline-progression-dimension="74.9%">
+		    			<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm" font-weight="normal">
+		    				<xsl:value-of select="Client/PaymentInfo"/>
+		    			</fo:block>
+		    		</fo:inline-container>
+		    	</fo:block>
+		  	</fo:inline-container>
+		  	
+        </fo:block>
+        
+        <fo:block margin="0px 0px 0px 0px" font-weight="bold" font-size="10px">
+       	
+        	<fo:inline-container inline-progression-dimension="99.9%">
+		    	<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm">
+		    		<fo:inline-container inline-progression-dimension="24.9%">
+		    			<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm">
+		    				Payout Total:
+		    			</fo:block>
+		    		</fo:inline-container>
+		    		<fo:inline-container inline-progression-dimension="74.9%">
+		    			<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm" font-weight="normal">
+		    				<xsl:value-of select="Client/TotalPay"/>
+		    			</fo:block>
+		    		</fo:inline-container>
+		    	</fo:block>
+		  	</fo:inline-container>
+		  	
+        </fo:block>
+        
+        <fo:block margin="0px 0px 0px 0px" font-weight="bold" font-size="10px">
+       	
+        	<fo:inline-container inline-progression-dimension="99.9%">
+		    	<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm">
+		    		<fo:inline-container inline-progression-dimension="24.9%">
+		    			<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm">
+		    				Ship To:
+		    			</fo:block>
+		    		</fo:inline-container>
+		    		<fo:inline-container inline-progression-dimension="74.9%">
+		    			<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm" font-weight="normal">
+		    				<xsl:value-of select="Client/ShipTo"/>
+		    			</fo:block>
+		    		</fo:inline-container>
+		    	</fo:block>
+		  	</fo:inline-container>
+		  	
+        </fo:block>
+        
+	</xsl:template>
+	
+	<xsl:template name="orderBottomDetail">
+		<xsl:call-template name="bottomTextDetail"/>
+	</xsl:template>
+	
+    <xsl:template name="orderDetail">
+	    <fo:block>
+	    	<xsl:call-template name="itemDetail"/>
+		</fo:block>
+	</xsl:template>
+    
+    <xsl:template name="itemDetail">
+    	<fo:block-container height="4.5cm" border="solid black 0.5px">
+		    <fo:table>
+		      <fo:table-column column-width="6cm"/>
+		      <fo:table-column column-width="9cm"/>
+		      <fo:table-column column-width="4cm"/>
+		      <xsl:call-template name="itemDetailTableHeader"/>
+		      <xsl:call-template name="itemDetailTableBody"/>
+		    </fo:table>
+	    </fo:block-container>
+	    
+   </xsl:template>
+   
+   <xsl:template name="orderOutboundBottomDetail">
+   		<fo:flow flow-name="body">
+	  		<fo:block>
+	    		<xsl:call-template name="orderOutboundHeader"/>
+	    		<xsl:call-template name="orderOutboundLabel"/>
+			</fo:block>
+  		</fo:flow>
+	</xsl:template>
+	
+	<xsl:template name="orderOutboundHeader">
+		
+		<fo:block margin="25px 0px 0px 0px" 
+			           				padding="5px 0px 5px 0px"
+			           				text-align="center" 
+			           				font-size="14px" 
+			           				font-weight="bold">OUTBOUND SHIPPING LABEL FOR:</fo:block>
+			           				
+		<fo:block margin="5px 0px 0px 0px" 
+			           				padding="2px 0px 2px 0px"
+			           				text-align="center" 
+			           				font-size="10px" 
+			           				font-weight="bold"><xsl:value-of select="Client/Order"/></fo:block>
+			           				
+		<fo:block margin="5px 0px 0px 0px" 
+			           				padding="2px 0px 2px 0px"
+			           				text-align="center" 
+			           				font-size="10px" 
+			           				font-weight="bold"><xsl:value-of select="Client/Name"/></fo:block>
+			           				
+		<fo:block margin="5px 0px 0px 0px" 
+			           				padding="2px 0px 2px 0px"
+			           				text-align="center" 
+			           				font-size="12px" 
+			           				font-weight="bold">Instructions:</fo:block> 
+			           				
+		<fo:block margin="5px 0px 0px 0px" 
+			           				padding="2px 0px 2px 0px"
+			           				text-align="center" 
+			           				font-size="10px" 
+			           				font-weight="normal">1. Please use the shipping label below to mail out a <xsl:value-of select="Client/RecommendedKit"/> box to the customer.</fo:block>
+			           				
+   		<fo:block margin="5px 0px 0px 0px" 
+			           				padding="2px 0px 2px 0px"
+			           				text-align="center" 
+			           				font-size="10px" 
+			           				font-weight="normal">2. Please include sealing stickers and the following bubble inserts: <xsl:value-of select="Client/RecommendedBubbleValue"/></fo:block>
+   		
+   		<fo:block margin="5px 0px 0px 0px" 
+			           				padding="2px 0px 2px 0px"
+			           				text-align="center" 
+			           				font-size="10px" 
+			           				font-weight="normal">3. Include the integrated Packing Slip and Return Shipping Label from the previous page</fo:block>
+   		
+   	</xsl:template>
+   	
+   	<xsl:template name="orderOutboundLabel">
+		
+		<fo:external-graphic content-width="scale-to-fit"
+				 content-height="100%"
+				 width="100%"
+				 scaling="uniform">
+          			<xsl:attribute name="src">
+            			<xsl:value-of select="$psPath"/><xsl:value-of select="Client/OutBoundLabel"/>
+            		</xsl:attribute>
+	        </fo:external-graphic>
+   		
+   	</xsl:template>
+   	
+  <xsl:template name="itemDetailTableHeader">
+    <fo:table-header>
+      <fo:table-row>
+        <fo:table-cell font-weight="bold" border-bottom="solid black 0.5px" padding="3px 0px 0px 10px">
+          <fo:block text-align="left" font-size="10px">Category</fo:block>
+        </fo:table-cell>
+        <fo:table-cell font-weight="bold" border-bottom="solid black 0.5px" padding="3px 0px 0px 10px">
+          <fo:block text-align="left" font-size="10px">Item</fo:block>
+        </fo:table-cell>
+        <fo:table-cell font-weight="bold" border-bottom="solid black 0.5px" padding="3px 0px 0px 10px">
+          <fo:block text-align="left" font-size="10px">Offer</fo:block>
+        </fo:table-cell>
+      </fo:table-row>
+    </fo:table-header>
+  </xsl:template>
+  
+  <xsl:template name="itemDetailTableBody">
+    <fo:table-body>
+      <xsl:for-each select="Item">
+        <xsl:call-template name="itemDetailTableRow"/>
+      </xsl:for-each>
+    </fo:table-body>
+  </xsl:template>
+  
+  <xsl:template name="itemDetailTableRow">
+    <xsl:element name="fo:table-row">
+      
+      <fo:table-cell padding="3px 0px 0px 10px" border-bottom="solid black 0.5px">
+        <fo:block text-align="left" font-size="10px">
+          <xsl:value-of select="Category"/>
+        </fo:block>
+      </fo:table-cell>
+      
+      <fo:table-cell padding="3px 0px 0px 10px" border-bottom="solid black 0.5px">
+        <fo:block text-align="left" font-size="10px">
+          <xsl:value-of select="Item"/>
+        </fo:block>
+      </fo:table-cell>
+      
+      <fo:table-cell padding="3px 0px 0px 10px" border-bottom="solid black 0.5px">
+        <fo:block text-align="left" font-size="10px">
+          <xsl:value-of select="Price"/>
+        </fo:block>
+      </fo:table-cell>
+      
+    </xsl:element>
+  </xsl:template>
+  
+  <xsl:template name="bottomTextDetail">
+  
+  	<fo:block margin="0px 0px 0px 0px" font-weight="bold" font-size="10px">
+  		<fo:inline-container inline-progression-dimension="36.9%">
+  			<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm" font-weight="bold">
+				<fo:inline-container inline-progression-dimension="48.5%" border="solid black 1px">
+					<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm" font-weight="bold">
+						Recommended Kit
+					</fo:block>
+				</fo:inline-container>
+				<fo:inline-container inline-progression-dimension="46.5%">
+					<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm" font-weight="bold" font-style="italic">
+						(internal use only):
+					</fo:block>
+				</fo:inline-container>
+			</fo:block>
+  		</fo:inline-container>
+  		<fo:inline-container inline-progression-dimension="30.9%">
+  			<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm" font-weight="bold" text-align="left">
+				<xsl:value-of select="Client/RecommendedKit"/>
+			</fo:block>
+  		</fo:inline-container>
+  		<fo:inline-container inline-progression-dimension="31.0%">
+  			<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm" font-weight="bold" text-align="right">
+				Item Total: <xsl:value-of select="Client/TotalPay"/>
+			</fo:block>
+  		</fo:inline-container>
+  	</fo:block>
+  	<fo:block margin="0px 0px 0px 0px" font-weight="bold" font-size="10px">
+  		<fo:inline-container inline-progression-dimension="28.5%">
+  			<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm" font-weight="bold">
+				<xsl:value-of select="Client/RecommendedBubbleLabel"/>
+			</fo:block>
+  		</fo:inline-container>
+  		<fo:inline-container inline-progression-dimension="39.9%">
+  			<fo:block top="0mm" left="0mm" padding="0mm" margin="0mm" font-weight="normal" font-style="italic">
+				<xsl:value-of select="Client/RecommendedBubbleValue"/>
+			</fo:block>
+  		</fo:inline-container>
+  	</fo:block>
+  	
+  	<fo:block margin="10px 0px 0px 0px" font-weight="normal" font-size="10px">
+  		Thank you for choosing BuyBackWorld.com! You&#39;ve taken your first step towards cashing in your unwanted items.
+  	</fo:block>
+  	<fo:block padding="3px" margin="0px 0px 0px 0px" font-weight="bold" font-size="10px" border="solid 0.5px black" text-align="center">
+  		HERE&#39;S WHAT TO DO NEXT:
+  	</fo:block>
+  	<fo:block padding="0px 0px 0px 10px" margin="0px 0px 0px 0px" font-weight="normal" font-size="10px" text-align="left">
+  		1. Place your items inside the enclosed bubble wrap protection packs
+  	</fo:block>
+  	<fo:block padding="0px 0px 0px 10px" margin="0px 0px 0px 0px" font-weight="normal" font-size="10px" text-align="left">
+  		2. Place your items inside the padded envelope or box with the top portion of this Packing Slip
+  	</fo:block>
+  	<fo:block padding="0px 0px 0px 10px" margin="0px 0px 0px 0px" font-weight="normal" font-size="10px" text-align="left">
+  		3. Peel off the FREE shipping label below and place it on the front of the envelope or box
+  	</fo:block>
+  	<fo:block padding="0px 0px 0px 10px" margin="0px 0px 0px 0px" font-weight="normal" font-size="10px" text-align="left">
+  		4. Drop your item off at your local <xsl:value-of select="Client/PostMethod"/> and wait to get paid!
+  	</fo:block>
+  	<fo:block padding="0px 0px 0px 0px" margin="5px 0px 0px 0px" font-weight="normal" font-size="10px" text-align="left">
+  		After that, just sit back, relax, and get ready to get cash for your unwanted items! We&#39;ll email you as soon as we receive your item(s).
+		Before you send us your phone, please make sure that you remember to cancel your service and pay the balance of your bill. If we receive your phone and it has an active account on it, 
+		this will lower the value of your offer. <xsl:value-of select="Client/IphoneIpadText"/>
+  	</fo:block>
+  	
+  	<fo:block-container absolute-position="absolute" left="{Client/Left}" top="{Client/Top}">
+  	
+  		<fo:block>
+  			
+  			<fo:external-graphic content-width="scale-to-fit"
+				 content-height="100%"
+				 width="80%"
+				 scaling="uniform">
+          			<xsl:attribute name="src">
+            			<xsl:value-of select="$psPath"/><xsl:value-of select="Client/ShippingLabel"/>
+            		</xsl:attribute>
+	        </fo:external-graphic>
+            
+        </fo:block>
+  	
+  	</fo:block-container>
+  	
+  	<xsl:choose>
+  		
+	  	<xsl:when test="Client/OutBoundLabel != ''">
+	  	
+		  	<fo:block-container 
+		  				width="90mm"
+		  				absolute-position="absolute" 
+		  				top="165mm" 
+		  				left="160mm"  
+		  				reference-orientation="90" 
+		  				display-align="center"
+				        inline-progression-dimension.minimum="5mm"
+				        inline-progression-dimension.optimum="30mm"
+				        inline-progression-dimension.maximum="auto">
+		  		
+		  		<fo:block padding="0px 0px 0px 0px" margin="0px 0px 0px 0px" font-weight="bold" font-size="10px" text-align="left">
+		  			Please use on: <xsl:value-of select="Client/RecommendedKit"/>
+		  		</fo:block>
+		  	
+		  	</fo:block-container>
+	  	
+	  	</xsl:when>
+	    <xsl:otherwise>
+	  	
+		  	<fo:block-container 
+	  				width="90mm"
+	  				absolute-position="absolute" 
+	  				top="165mm" 
+	  				left="160mm"  
+	  				reference-orientation="90" 
+	  				display-align="center"
+			        inline-progression-dimension.minimum="5mm"
+			        inline-progression-dimension.optimum="30mm"
+			        inline-progression-dimension.maximum="auto">
+	  		
+		  		<fo:block padding="0px 0px 0px 0px" margin="0px 0px 0px 0px" font-weight="bold" font-size="10px" text-align="left">
+		  			<xsl:value-of select="Client/Name"/>
+		  		</fo:block>
+		  		<fo:block padding="0px 0px 0px 0px" margin="0px 0px 0px 0px" font-weight="bold" font-size="10px" text-align="left">
+		  			<xsl:value-of select="Client/Street"/>
+		  		</fo:block>
+		  		<fo:block padding="0px 0px 0px 0px" margin="0px 0px 0px 0px" font-weight="bold" font-size="10px" text-align="left">
+		  			<xsl:value-of select="Client/City"/>, <xsl:value-of select="Client/State"/>, <xsl:value-of select="Client/Zip"/>
+		  		</fo:block>
+	  		
+	  		</fo:block-container>
+	  	
+	  	</xsl:otherwise>
+  	
+  	</xsl:choose>
+  	
+  </xsl:template>
+  
+</xsl:stylesheet>
